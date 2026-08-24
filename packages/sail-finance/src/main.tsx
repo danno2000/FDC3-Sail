@@ -10,6 +10,7 @@ import {
   parseMockAppControlTeardownBroadcast,
 } from "../../sail-conformance-harness/src/harness-finos-teardown"
 import { bootstrapDockviewPopoutShell, isDockviewPopoutShell } from "./utils/dockview-popout"
+import { loadDemoApplications } from "./demo-apps"
 
 import "./index.css"
 import App from "./App"
@@ -124,13 +125,17 @@ if (isDockviewPopoutShell()) {
       }
     : { appDirectories: [FINOS_APP_DIRECTORY_URL] }
 
+  // Elgin demo apps (`npm run demo` in fdc3-demo-apps). Excluded from toolbox runs for the same
+  // reason the public directory is: extra apps inflate the FINOS findIntent expectations.
+  const demoApplications = isToolboxRun ? [] : loadDemoApplications()
+
   console.info(
     `[Sail] Conformance toolbox: ${conformance.profile} — FDC3 target ${conformance.fdc3Version} — origin ${conformance.origin}${isToolboxRun ? " — toolbox profile ON (heartbeat off, auto intent resolve, conformance apps only)" : ""}`,
   )
 
   const agent = new SailDesktopAgent({
     appLauncher,
-    apps: [...conformance.applications],
+    apps: [...conformance.applications, ...demoApplications],
     ...toolboxOverrides,
   })
 

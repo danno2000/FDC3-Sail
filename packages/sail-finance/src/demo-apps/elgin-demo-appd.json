@@ -1,0 +1,77 @@
+{
+  "applications": [
+    {
+      "appId": "asset-screener",
+      "name": "AssetScreener",
+      "title": "Asset Screener",
+      "type": "web",
+      "description": "Screens instruments and publishes the current selection as an fdc3.instrument context on the joined user channel.",
+      "categories": ["Elgin Demo", "Research"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5173" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "userChannels": {
+          "broadcasts": ["fdc3.instrument"],
+          "listensFor": ["fdc3.instrument"]
+        }
+      }
+    },
+    {
+      "appId": "risk-engine",
+      "name": "RiskEngine",
+      "title": "Risk Engine",
+      "type": "web",
+      "description": "Scores instruments broadcast on the user channel and publishes elginwhite.riskAssessment alternatives back to it.",
+      "categories": ["Elgin Demo", "Risk"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5174" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "userChannels": {
+          "broadcasts": ["fdc3.instrument", "elginwhite.riskAssessment"],
+          "listensFor": ["fdc3.instrument"]
+        }
+      }
+    },
+    {
+      "appId": "order-management",
+      "name": "OrderManagement",
+      "title": "Order Management",
+      "type": "web",
+      "description": "Order Management System (OMS) for trade execution. Turns elginwhite.tradeProposals into orders and broadcasts fdc3.order updates.",
+      "categories": ["Elgin Demo", "Trading"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5175" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "userChannels": {
+          "broadcasts": ["fdc3.order", "fdc3.instrument"],
+          "listensFor": ["elginwhite.tradeProposals", "fdc3.instrument"]
+        }
+      }
+    },
+    {
+      "appId": "portfolio",
+      "name": "Portfolio",
+      "title": "Portfolio",
+      "type": "web",
+      "description": "Portfolio management view. Presentation only — this app does not currently use the FDC3 API.",
+      "categories": ["Elgin Demo", "Portfolio"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5178" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }]
+    },
+    {
+      "appId": "desktop-bridge",
+      "name": "DesktopBridge",
+      "title": "Desktop Bridge",
+      "type": "web",
+      "description": "WebSocket bridge that proxies native desktop applications into the FDC3 environment. Connects to the Desktop Agent via getAgent() and relays DACP on behalf of each desktop app.",
+      "categories": ["Elgin Demo", "Infrastructure"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5180" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }]
+    }
+  ]
+}
