@@ -11,9 +11,9 @@ what was deliberately dropped, and why.
 
 ## Scope
 
-`npm run demo` starts six vite servers: `asset-screener` (5173), `risk-engine` (5174),
-`order-management` (5175), `portfolio` (5178), `here-provider` (5179) and
-`desktop-bridge` (5180). Five are listed here. `here-provider` is the OpenFin platform
+`npm run demo` starts seven vite servers: `asset-screener` (5173), `risk-engine` (5174),
+`order-management` (5175), `portfolio` (5178), `here-provider` (5179),
+`desktop-bridge` (5180) and `teams-adapter` (5181). Six are listed here. `here-provider` is the OpenFin platform
 provider, not an app — it only serves the HERE manifest and the shared icon.
 
 `npm run dev` additionally starts `charts` (5176) and `news` (5177). Both are outside the
@@ -41,6 +41,7 @@ The source directory carries no `interop` block, so channel contexts were read o
 | `asset-screener` | `fdc3.instrument` | `fdc3.instrument` |
 | `risk-engine` | `fdc3.instrument`, `elginwhite.riskAssessment` | `fdc3.instrument` |
 | `order-management` | `fdc3.order`, `fdc3.instrument` | `elginwhite.tradeProposals`, `fdc3.instrument` |
+| `ms-teams` | `fdc3.instrument` | `fdc3.instrument` |
 
 `elginwhite.tradeProposals` has no producer in the repo — it arrives from the external WPF
 app over `desktop-bridge` as a DACP `broadcastRequest`.

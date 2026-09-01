@@ -72,6 +72,23 @@
       "publisher": "Elgin",
       "details": { "url": "http://localhost:5180" },
       "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }]
+    },
+    {
+      "appId": "ms-teams",
+      "name": "MicrosoftTeams",
+      "title": "Microsoft Teams",
+      "type": "web",
+      "description": "FDC3 adapter for the local Microsoft Teams client. When opened here it uses getAgent(); the sideloaded Teams tab joins through Desktop Bridge.",
+      "categories": ["Elgin Demo", "Collaboration"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5181" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "userChannels": {
+          "broadcasts": ["fdc3.instrument"],
+          "listensFor": ["fdc3.instrument"]
+        }
+      }
     }
   ]
 }
