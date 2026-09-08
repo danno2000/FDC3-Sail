@@ -3,6 +3,10 @@ import react from "@vitejs/plugin-react"
 import tailwindcss from "@tailwindcss/vite"
 import path from "path"
 
+if (process.env.DEMO_HTTPS && !process.env.VITE_DEMO_HTTPS) {
+  process.env.VITE_DEMO_HTTPS = process.env.DEMO_HTTPS
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   // @ts-expect-error vite-plus lazyPlugins triggers TS2321 excessive stack depth

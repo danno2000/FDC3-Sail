@@ -7,8 +7,8 @@
  * from the directory.
  *
  * The demo servers bind fixed ports (`strictPort: true` in each package's vite config), so
- * the URLs are stable. `VITE_DEMO_APPS_ORIGIN` retargets them as a set for the case where
- * the demo repo is served from somewhere other than localhost.
+ * the URLs are stable. `VITE_DEMO_APPS_HOST` retargets the host. `VITE_DEMO_HTTPS` /
+ * `DEMO_HTTPS` switches `http://` to `https://` — HTTP is the default.
  */
 
 import type { DirectoryApp } from "@finos/sail-desktop-agent"
@@ -18,15 +18,23 @@ import demoAppDirectory from "./elgin-demo-appd.json"
 /** Host the demo vite servers bind by default. Port is preserved when retargeting. */
 const DEMO_APPS_DEFAULT_ORIGIN_HOST = "localhost"
 
-function retargetHost(app: DirectoryApp, host: string): DirectoryApp {
+function flagOn(value: unknown): boolean {
+  return typeof value === "string" && /^(1|true|yes)$/i.test(value.trim())
+}
+
+function retarget(app: DirectoryApp, host: string | undefined, https: boolean): DirectoryApp {
   const rewrite = (value: string): string => {
     try {
       const url = new URL(value)
       if (url.hostname !== DEMO_APPS_DEFAULT_ORIGIN_HOST) {
         return value
       }
-      url.hostname = host
-      return url.toString()
+      let next = value
+      if (host && host !== DEMO_APPS_DEFAULT_ORIGIN_HOST) {
+        url.hostname = host
+        next = url.toString()
+      }
+      return https ? next.replace(/^http:/, "https:") : next.replace(/^https:/, "http:")
     } catch {
       return value
     }
@@ -44,12 +52,15 @@ function retargetHost(app: DirectoryApp, host: string): DirectoryApp {
  *
  * @param options.host - Host serving the demo apps. Defaults to `VITE_DEMO_APPS_HOST`,
  *   then `localhost`.
+ * @param options.https - When true, load demo apps over HTTPS. Defaults to
+ *   `VITE_DEMO_HTTPS` / `DEMO_HTTPS`. HTTP is the default.
  */
-export function loadDemoApplications(options?: { host?: string }): DirectoryApp[] {
+export function loadDemoApplications(options?: { host?: string; https?: boolean }): DirectoryApp[] {
   const apps = structuredClone(demoAppDirectory.applications as DirectoryApp[])
   const host = options?.host ?? import.meta.env.VITE_DEMO_APPS_HOST
+  const https = options?.https ?? flagOn(import.meta.env.VITE_DEMO_HTTPS)
+  const hostChanged =
+    typeof host === "string" && host.length > 0 && host !== DEMO_APPS_DEFAULT_ORIGIN_HOST
 
-  return typeof host === "string" && host.length > 0 && host !== DEMO_APPS_DEFAULT_ORIGIN_HOST
-    ? apps.map(app => retargetHost(app, host))
-    : apps
+  return apps.map(app => retarget(app, hostChanged ? host : undefined, https))
 }

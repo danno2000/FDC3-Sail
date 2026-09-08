@@ -11,6 +11,7 @@
     "clean": "npm run clean --workspaces",
     "build": "npm run build -w @finos/sail-desktop-agent -w @finos/sail-platform -w @finos/sail-finance -w @finos/sail-one -w @finos/sail-conformance-harness",
     "dev": "concurrently -n agent,api,web \"npm run dev -w @finos/sail-desktop-agent\" \"npm run dev -w @finos/sail-platform\" \"npm run dev -w @finos/sail-finance\"",
+    "dev:https": "DEMO_HTTPS=1 VITE_DEMO_HTTPS=1 npm run dev",
     "dev:one": "concurrently -n agent,api,one \"npm run dev -w @finos/sail-desktop-agent\" \"npm run dev -w @finos/sail-platform\" \"npm run dev -w @finos/sail-one\"",
     "dev:conformance": "npm run dev -w @finos/sail-conformance-harness",
     "docs:dev": "npm run start --workspace=@finos/sail-docs",

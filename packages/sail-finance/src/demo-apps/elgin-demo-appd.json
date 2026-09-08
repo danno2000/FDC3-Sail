@@ -89,6 +89,40 @@
           "listensFor": ["fdc3.instrument"]
         }
       }
+    },
+    {
+      "appId": "ms-teams-bot",
+      "name": "FDC3TeamsBot",
+      "title": "FDC3 Teams Bot",
+      "type": "web",
+      "description": "Teams @mention bot. Parses @FDC3 AAPL, looks up the instrument, and broadcasts fdc3.instrument through Desktop Bridge.",
+      "categories": ["Elgin Demo", "Collaboration"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5181/?app=ms-teams-bot" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "userChannels": {
+          "broadcasts": ["fdc3.instrument"],
+          "listensFor": ["fdc3.instrument"]
+        }
+      }
+    },
+    {
+      "appId": "slack-bot",
+      "name": "FDC3SlackBot",
+      "title": "FDC3 Slack Bot",
+      "type": "web",
+      "description": "Slack @mention bot. Parses @agent AAPL and broadcasts fdc3.instrument through Desktop Bridge.",
+      "categories": ["Elgin Demo", "Collaboration"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5180/adapter.html?app=slack-bot" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "userChannels": {
+          "broadcasts": ["fdc3.instrument"],
+          "listensFor": ["fdc3.instrument"]
+        }
+      }
     }
   ]
 }
