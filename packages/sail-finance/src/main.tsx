@@ -114,6 +114,10 @@ if (isDockviewPopoutShell()) {
   // heartbeat to kill a ~9-minute suite, and no modal resolver waiting on a human.
   const isToolboxRun = conformance.profile === "local"
 
+  // Browser-hosted iframes miss DACP heartbeat ACKs when Chrome throttles a background tab or a
+  // hidden Dockview panel. Default timeout is 60s, after which Sail tears down the instance while
+  // the app's getAgent() proxy is still live — DesktopAgent.broadcast() then no-ops and the demo
+  // UI still looks successful. WCP6 on iframe unload is enough liveness for this shell.
   const toolboxOverrides = isToolboxRun
     ? {
         heartbeatEnabled: false,
@@ -123,7 +127,7 @@ if (isDockviewPopoutShell()) {
         // logs hide it. Matches the harness debug profile.
         logPayloadDetail: "full" as const,
       }
-    : { appDirectories: [FINOS_APP_DIRECTORY_URL] }
+    : { appDirectories: [FINOS_APP_DIRECTORY_URL], heartbeatEnabled: false }
 
   // Elgin demo apps (`npm run demo` in fdc3-demo-apps). Excluded from toolbox runs for the same
   // reason the public directory is: extra apps inflate the FINOS findIntent expectations.

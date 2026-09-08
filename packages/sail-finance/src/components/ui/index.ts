@@ -27,8 +27,10 @@ export {
 
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "./popover"
 
+export { Badge, badgeVariants } from "./badge"
 export { Button } from "./button"
 export { Input } from "./input"
+export { LabelField, type LabelFieldProps } from "./label-field"
 export { Logo } from "./logo"
 export { LogoSail } from "./logo-sail"
 export { Separator } from "./separator"

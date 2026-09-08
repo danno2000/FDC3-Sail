@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui"
-import { Skeleton } from "@/components/ui"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from "@/components/ui"
 import { ExternalLink } from "lucide-react"
 import type { IDockviewPanelProps } from "dockview-react"
 
@@ -10,7 +16,9 @@ import { useWorkspaceStore } from "../../stores/workspace-store"
 import type { DirectoryApp, WebAppDetails } from "../../types/common"
 
 import { ChooseAppIcon } from "./ChooseAppIcon"
+import { appMatchesLabels, labelSuggestionsFromApps } from "./filter-apps"
 import { FDC3_PANEL_RENDERER } from "../layout-grid/dockview-options"
+import { LabelSearch } from "../label-search"
 
 interface AppCardProps {
   app: DirectoryApp
@@ -237,18 +245,36 @@ export function AppDirectory({ panelProps }: AppDirectoryProps) {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="mb-2 text-2xl font-semibold tracking-tight">App Directory</h1>
-        <p className="text-muted-foreground">
-          Browse and launch applications ({apps.length} available)
-        </p>
-      </div>
+      <LabelSearch
+        items={apps}
+        match={appMatchesLabels}
+        suggestions={labelSuggestionsFromApps}
+        placeholder="Filter by label…"
+        aria-label="Filter apps by label"
+      >
+        {({ filtered, labels, total, field }) => (
+          <>
+            <div className="mb-6">
+              <h1 className="mb-2 text-2xl font-semibold tracking-tight">App Directory</h1>
+              <p className="text-muted-foreground mb-4">
+                Browse and launch applications ({filtered.length}
+                {labels.length > 0 ? ` matching of ${total}` : ` available`})
+              </p>
+              {field}
+            </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {apps.map(app => (
-          <AppCard key={String(app.appId)} app={app} onAppClick={handleAppClick} />
-        ))}
-      </div>
+            {filtered.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No apps match these labels.</p>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filtered.map(app => (
+                  <AppCard key={String(app.appId)} app={app} onAppClick={handleAppClick} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </LabelSearch>
     </div>
   )
 }
