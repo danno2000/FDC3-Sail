@@ -28,6 +28,15 @@
       "details": { "url": "http://localhost:5174" },
       "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
       "interop": {
+        "intents": {
+          "listensFor": {
+            "ViewRisk": {
+              "displayName": "View Risk Profile",
+              "contexts": ["fdc3.instrument", "fdc3.nothing"],
+              "resultType": "elginwhite.riskProfile"
+            }
+          }
+        },
         "userChannels": {
           "broadcasts": ["fdc3.instrument", "elginwhite.riskAssessment"],
           "listensFor": ["fdc3.instrument"]

@@ -39,7 +39,7 @@ The source directory carries no `interop` block, so channel contexts were read o
 | App | Broadcasts | Listens for |
 | --- | --- | --- |
 | `asset-screener` | `fdc3.instrument` | `fdc3.instrument` |
-| `risk-engine` | `fdc3.instrument`, `elginwhite.riskAssessment` | `fdc3.instrument` |
+| `risk-engine` | `fdc3.instrument`, `elginwhite.riskAssessment` | `fdc3.instrument` on the user channel; `ViewRisk` returns the current book as `elginwhite.riskProfile` (VaR, sensitivities, stress, factors). A ticker is optional; the result is always fund-level, not single-name. |
 | `order-management` | `fdc3.order`, `fdc3.instrument` | `elginwhite.tradeProposals`, `fdc3.instrument` |
 | `ms-teams` | `fdc3.instrument` | `fdc3.instrument` |
 
