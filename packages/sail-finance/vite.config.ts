@@ -68,6 +68,8 @@ export default defineConfig({
       ignored: [
         "**/node_modules/**",
         "**/.git/**",
+        // Chrome-for-Testing persistent profile writes must not full-reload the shell
+        "**/.chrome-for-testing-profile*/**",
         "!**/node_modules/@finos/sail-desktop-agent/**",
         "!**/node_modules/@finos/sail-platform/**",
       ],

@@ -22,7 +22,7 @@
       "name": "RiskEngine",
       "title": "Risk Engine",
       "type": "web",
-      "description": "Scores instruments broadcast on the user channel and publishes elginwhite.riskAssessment alternatives back to it.",
+      "description": "Scores instruments broadcast on the user channel, publishes elginwhite.riskAssessment alternatives, and can submit elginwhite.tradeProposals to OMS.",
       "categories": ["Elgin Demo", "Risk"],
       "publisher": "Elgin",
       "details": { "url": "http://localhost:5174" },
@@ -38,7 +38,7 @@
           }
         },
         "userChannels": {
-          "broadcasts": ["fdc3.instrument", "elginwhite.riskAssessment"],
+          "broadcasts": ["fdc3.instrument", "elginwhite.riskAssessment", "elginwhite.tradeProposals"],
           "listensFor": ["fdc3.instrument"]
         }
       }
