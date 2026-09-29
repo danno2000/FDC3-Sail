@@ -54,7 +54,7 @@ export {
 } from "./logging/logger"
 
 // App directory
-export type { DirectoryApp, WebAppDetails } from "./app-directory/types"
+export type { DirectoryApp, WebAppDetails, NativeAppDetails } from "./app-directory/types"
 
 /**
  * App-connection types that appear in the public agent surface.

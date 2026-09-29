@@ -9,6 +9,14 @@ import type { DirectoryApp, WebAppDetails } from "@finos/sail-desktop-agent"
 import { getIcon } from "../icon/app-icon"
 import { AppHosting } from "../state"
 import type { Image } from "@finos/fdc3"
+import { fdc3OpenProtocolUrl } from "../native-open"
+
+type NativeAppDetails = { path: string; arguments?: string }
+
+function nativeConnectionUrl(details: DirectoryApp["details"]): string | undefined {
+  const value = (details as unknown as Record<string, unknown>).connectionUrl
+  return typeof value === "string" && value.length > 0 ? value : undefined
+}
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
@@ -125,6 +133,14 @@ export function AppDPanel({ closeAction }: AppPanelProps) {
   }, [showJson])
 
   const canOpenWeb = chosen != null && chosen.type === "web"
+  const canOpenNative = chosen != null && chosen.type === "native"
+  const canOpen = canOpenWeb || canOpenNative
+  const nativePath =
+    chosen?.type === "native" &&
+    typeof (chosen.details as NativeAppDetails | undefined)?.path === "string"
+      ? (chosen.details as NativeAppDetails).path
+      : null
+  const connectionUrl = chosen?.type === "native" ? nativeConnectionUrl(chosen.details) : undefined
 
   return (
     <Popup
@@ -167,10 +183,10 @@ export function AppDPanel({ closeAction }: AppPanelProps) {
                         <PopupHeaderButton
                           text="Open"
                           primary
-                          disabled={!canOpenWeb}
+                          disabled={!canOpen}
                           icon={<PanelTop aria-hidden strokeWidth={2} />}
                           onClick={() => {
-                            void getAppState().open(chosen, AppHosting.Frame)
+                            void getAppState().open(app, AppHosting.Frame)
                             closeAction()
                           }}
                         />
@@ -179,7 +195,7 @@ export function AppDPanel({ closeAction }: AppPanelProps) {
                           disabled={!canOpenWeb}
                           icon={<ExternalLink aria-hidden strokeWidth={2} />}
                           onClick={() => {
-                            void getAppState().open(chosen, AppHosting.Tab)
+                            void getAppState().open(app, AppHosting.Tab)
                             closeAction()
                           }}
                         />
@@ -197,9 +213,29 @@ export function AppDPanel({ closeAction }: AppPanelProps) {
                         ))}
                       </div>
                     ) : null}
-                    {app.type === "native" && (app.details as any)?.connectionUrl && (
-                      <ConnectionInstructions connectionUrl={(app.details as any).connectionUrl} />
-                    )}
+                    {app.type === "native" && nativePath ? (
+                      <div className={styles.connectionSection}>
+                        <p className={styles.connectionIntro}>
+                          Desktop Bridge will open this known app by executing the App Directory
+                          path. The client never supplies the path.
+                        </p>
+                        <div className={styles.platformContent}>
+                          <div className={styles.platformInstructions}>
+                            <p>
+                              Executable path for <code>{app.appId}</code>
+                            </p>
+                            <code className={styles.connectionCode}>{nativePath}</code>
+                            <p>Protocol handler</p>
+                            <code className={styles.connectionCode}>
+                              {fdc3OpenProtocolUrl(app.appId)}
+                            </code>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                    {connectionUrl ? (
+                      <ConnectionInstructions connectionUrl={connectionUrl} />
+                    ) : null}
                     {app.screenshots && app.screenshots.length > 0 ? (
                       <div className={styles.appDScreenshots}>
                         {app.screenshots.map((s: Image) => (

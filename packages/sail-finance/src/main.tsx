@@ -11,6 +11,7 @@ import {
 } from "../../sail-conformance-harness/src/harness-finos-teardown"
 import { bootstrapDockviewPopoutShell, isDockviewPopoutShell } from "./utils/dockview-popout"
 import { loadDemoApplications } from "./demo-apps"
+import { openNativeViaBridge } from "./native-open"
 
 import "./index.css"
 import App from "./App"
@@ -39,6 +40,19 @@ if (isDockviewPopoutShell()) {
     // eslint-disable-next-line @typescript-eslint/require-await -- async so a throw rejects the returned promise
     launch: async (request, appMetadata: AppMetadata) => {
       const instanceId = request.app.instanceId || crypto.randomUUID()
+
+      if (isNativeDirectoryApp(appMetadata)) {
+        const opened = await openNativeViaBridge({
+          app: { appId: appMetadata.appId, instanceId },
+          ...(request.context !== undefined ? { context: request.context } : {}),
+        })
+        console.log(`[Sail] Opened native app ${appMetadata.appId}`, {
+          instanceId: opened.instanceId ?? instanceId,
+          path: nativePath(appMetadata),
+        })
+        return { appId: request.app.appId, instanceId: opened.instanceId ?? instanceId }
+      }
+
       const workspaceStore = useWorkspaceStore.getState()
       const { activeWorkspaceId } = workspaceStore
 
@@ -188,4 +202,18 @@ if (isDockviewPopoutShell()) {
       <App agent={agent} />
     </StrictMode>,
   )
+}
+
+function isNativeDirectoryApp(
+  app: AppMetadata,
+): app is AppMetadata & { type: "native"; details?: { path?: string } } {
+  return "type" in app && (app as { type?: string }).type === "native"
+}
+
+function nativePath(app: AppMetadata): string | undefined {
+  if (!("details" in app)) {
+    return undefined
+  }
+  const details = (app as { details?: { path?: unknown } }).details
+  return details && typeof details.path === "string" ? details.path : undefined
 }

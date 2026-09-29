@@ -1,6 +1,12 @@
 // App directory shapes come from the Desktop Agent, which owns FDC3.
 export type { DirectoryApp, WebAppDetails } from "@finos/sail-desktop-agent"
 
+/** FDC3 native launch details (`details.path` on `type: "native"` records). */
+export type NativeAppDetails = {
+  path: string
+  arguments?: string
+}
+
 /**
  * A user channel as this shell paints it.
  *

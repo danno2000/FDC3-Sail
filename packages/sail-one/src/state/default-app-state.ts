@@ -74,7 +74,7 @@ export class DefaultAppState implements AppState {
    * records the hosting choice and reports the result back to the caller.
    */
   async open(detail: DirectoryApp, destination?: AppHosting): Promise<AppOpenDetails> {
-    if (detail.type !== "web") {
+    if (detail.type !== "web" && detail.type !== "native") {
       throw new Error("Unsupported app type: " + detail.type)
     }
 

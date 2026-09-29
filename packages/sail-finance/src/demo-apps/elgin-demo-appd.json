@@ -132,6 +132,19 @@
           "listensFor": ["fdc3.instrument"]
         }
       }
+    },
+    {
+      "appId": "elginwhite-crd-mock",
+      "name": "CRDMock",
+      "title": "CRD Mock Application",
+      "type": "native",
+      "description": "WPF mock CRD. Sail asks Desktop Bridge to open the App Directory path for this known appId; the process then connects to ws://localhost:5180/bridge.",
+      "categories": ["Elgin Demo", "Infrastructure"],
+      "publisher": "Elgin",
+      "details": {
+        "path": "ElginWhite.Mock.CRD.exe"
+      },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }]
     }
   ]
 }

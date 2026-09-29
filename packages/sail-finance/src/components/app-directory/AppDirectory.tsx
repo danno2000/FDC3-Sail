@@ -7,13 +7,14 @@ import {
   CardTitle,
   Skeleton,
 } from "@/components/ui"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Monitor } from "lucide-react"
 import type { IDockviewPanelProps } from "dockview-react"
 
-import { useAppDirectoryStore } from "../../contexts"
+import { useAppDirectoryStore, useSailDesktopAgent } from "../../contexts"
 import { useUIStore } from "../../stores/ui-store"
 import { useWorkspaceStore } from "../../stores/workspace-store"
-import type { DirectoryApp, WebAppDetails } from "../../types/common"
+import type { DirectoryApp, NativeAppDetails, WebAppDetails } from "../../types/common"
+import { fdc3OpenProtocolUrl } from "../../native-open"
 
 import { ChooseAppIcon } from "./ChooseAppIcon"
 import { appMatchesLabels, labelSuggestionsFromApps } from "./filter-apps"
@@ -46,6 +47,16 @@ const AppCard = ({ app, onAppClick }: AppCardProps) => {
     return null
   }
 
+  const getNativePath = (app: DirectoryApp) => {
+    if (app.type === "native") {
+      const path = (app.details as NativeAppDetails).path
+      return typeof path === "string" && path.length > 0 ? path : null
+    }
+    return null
+  }
+
+  const nativePath = getNativePath(app)
+
   return (
     <Card
       className="cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
@@ -75,6 +86,14 @@ const AppCard = ({ app, onAppClick }: AppCardProps) => {
                 <span className="truncate">Web App</span>
               </div>
             )}
+            {app.type === "native" && nativePath && (
+              <div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
+                <Monitor className="size-3 shrink-0" />
+                <span className="truncate font-mono" title={nativePath}>
+                  {nativePath}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -82,6 +101,14 @@ const AppCard = ({ app, onAppClick }: AppCardProps) => {
         <CardDescription className="line-clamp-3 text-xs">
           {app.description || "No description available"}
         </CardDescription>
+        {app.type === "native" && (
+          <div
+            className="text-muted-foreground mt-2 truncate font-mono text-xs"
+            title={fdc3OpenProtocolUrl(app.appId)}
+          >
+            {fdc3OpenProtocolUrl(app.appId)}
+          </div>
+        )}
         {app.version && (
           <div className="text-muted-foreground mt-2 text-xs">Version {app.version}</div>
         )}
@@ -120,6 +147,7 @@ interface AppDirectoryProps {
 
 export function AppDirectory({ panelProps }: AppDirectoryProps) {
   const { apps, isLoading, error, loadApps, refreshApps } = useAppDirectoryStore()
+  const agent = useSailDesktopAgent()
   const { addPanel, workspaces, activeWorkspaceId } = useWorkspaceStore()
   const { closeQuickAccessPanel } = useUIStore()
   const activeWorkspace = workspaces.get(activeWorkspaceId)
@@ -130,8 +158,28 @@ export function AppDirectory({ panelProps }: AppDirectoryProps) {
     loadApps()
   }, [loadApps])
 
+  const closeDirectoryPanel = () => {
+    if (panelProps) {
+      setTimeout(() => {
+        const directoryPanel = panelProps.containerApi.getPanel(panelProps.api.id)
+        if (directoryPanel) {
+          panelProps.containerApi.removePanel(directoryPanel)
+        }
+      }, 100)
+    }
+    closeQuickAccessPanel()
+  }
+
   const handleAppClick = (app: DirectoryApp) => {
     console.log("App clicked:", app)
+
+    if (app.type === "native") {
+      void agent.apps.open(app.appId).catch((openError: unknown) => {
+        console.error(`Failed to open native app ${app.appId}:`, openError)
+      })
+      closeDirectoryPanel()
+      return
+    }
 
     // oxlint-disable-next-line typescript/no-unnecessary-condition -- FDC3 App Directory JSON: DirectoryApp.details is typed required, but a directory entry's JSON can still omit it
     if (app.type !== "web" || !app.details) {
@@ -181,18 +229,9 @@ export function AppDirectory({ panelProps }: AppDirectoryProps) {
           referenceGroup: currentGroup,
         },
       })
-
-      // Close this directory panel after adding the app
-      setTimeout(() => {
-        const directoryPanel = panelProps.containerApi.getPanel(panelProps.api.id)
-        if (directoryPanel) {
-          panelProps.containerApi.removePanel(directoryPanel)
-        }
-      }, 100)
     }
 
-    // Close the quick access panel if it's open
-    closeQuickAccessPanel()
+    closeDirectoryPanel()
   }
 
   if (error) {

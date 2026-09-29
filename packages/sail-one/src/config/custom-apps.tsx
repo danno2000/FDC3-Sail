@@ -1,3 +1,4 @@
+/* oxlint-disable react/only-export-components -- helpers share the custom-app editor with the panel components */
 import { getClientState, getServerState } from "../state"
 import styles from "./styles.module.css"
 import type { DirectoryApp, WebAppDetails } from "@finos/sail-desktop-agent"
@@ -118,6 +119,7 @@ type EditableState = {
   title: string
   type: AppType
   url: string
+  path: string
   description: string
   intents: EditableIntent[]
 }
@@ -128,6 +130,7 @@ function newApp(): EditableState {
     title: "New App",
     type: "web",
     url: "https://your.app.url/here",
+    path: "",
     description: "Describe your app here",
     intents: [
       {
@@ -148,6 +151,7 @@ function createInitialState(): EditableState[] {
         type: a.type === "native" ? "native" : "web",
         // oxlint-disable-next-line typescript/no-unnecessary-condition -- localStorage-persisted state: getCustomApps() reads back custom-apps saved to localStorage, whose shape can predate the current WebAppDetails type
         url: (a.details as WebAppDetails)?.url ?? "",
+        path: (a.details as { path?: string }).path ?? "",
         title: a.title,
         description: a.description ?? "",
         intents: Object.keys(lf).map(k => {
@@ -167,7 +171,7 @@ function convertToDirectoryApps(es: EditableState[]): DirectoryApp[] {
       appId: s.id,
       title: s.title,
       name: s.title,
-      details: s.type === "web" ? { url: s.url } : { path: "" },
+      details: s.type === "web" ? { url: s.url } : { path: s.path },
       type: s.type,
       description: s.description,
       icons: [{ src: "/icons/control/choose-app.svg" }],
@@ -353,14 +357,23 @@ const CustomAppItem = ({
             </select>
           </label>
           <label className={styles.settingsField}>
-            <span className={styles.settingsFieldLabel}>URL</span>
+            <span className={styles.settingsFieldLabel}>
+              {d.type === "native" ? "Path" : "URL"}
+            </span>
             <input
-              type="url"
+              type={d.type === "native" ? "text" : "url"}
               className={styles.settingsInput}
-              value={d.url}
-              placeholder="https://your.app.url/here"
-              disabled={d.type === "native"}
-              onChange={e => update({ ...d, url: e.target.value })}
+              value={d.type === "native" ? d.path : d.url}
+              placeholder={
+                d.type === "native"
+                  ? "C:\\Apps\\ElginWhite.Mock.CRD.exe"
+                  : "https://your.app.url/here"
+              }
+              onChange={e =>
+                d.type === "native"
+                  ? update({ ...d, path: e.target.value })
+                  : update({ ...d, url: e.target.value })
+              }
             />
           </label>
         </div>

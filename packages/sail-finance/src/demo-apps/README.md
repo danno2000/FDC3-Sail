@@ -32,6 +32,10 @@ demo script and are not listed; `news` uses FDC3, `charts` does not.
 — they were dropped from it when the CRD interop entries were added. Their records here are
 written from the apps' source.
 
+**`elginwhite-crd-mock`** is listed as `type: native` with `details.path` (the executable
+Desktop Bridge will run for that known `appId`). Open goes through `fdc3.open` →
+`POST http://localhost:5180/fdc3/open`; the host ignores any client-supplied path.
+
 ## Contexts
 
 The source directory carries no `interop` block, so channel contexts were read off the code:
@@ -63,11 +67,6 @@ The same applies to the earlier intent sets in the directory's git history (`Vie
 **`crd-interop-tester`** (`http://127.0.0.1:8081/ElginWhite.Interop.Web/crd-interop-tester.html`).
 An externally hosted IIS app, not started by `npm run demo`. Its four intents (`ViewNews`,
 `ViewChart`, `ViewBond`, `SubscribePricing`) are likewise unimplemented on this side.
-
-**`elginwhite-crd-mock`** (`type: native`, `details.path: ElginWhite.Mock.CRD.exe`). Sail's
-`appLauncher` in `main.tsx` requires `details.url` and throws otherwise, so a native record
-would list in the launcher and fail on open. The mock participates through `desktop-bridge`
-rather than by being launched.
 
 **`test-desktop-app`** (`http://localhost:5180/adapter.html?app=test-desktop-app`). Stale on
 two counts: the bridge serves `iframe-proxy.html`, not `adapter.html`, and it spawns those

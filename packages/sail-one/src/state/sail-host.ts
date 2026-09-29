@@ -9,6 +9,7 @@ import type { AppIdentifier, AppMetadata, BrowserTypes } from "@finos/fdc3"
 import type { SailClientStateArgs, TabDetail } from "./client-state"
 import { AppHosting } from "./default-app-state"
 import { getAppState, getClientState } from "./index"
+import { openNativeViaBridge } from "../native-open"
 
 /**
  * Lifecycle of an app instance as far as the Sail shell is concerned.
@@ -192,6 +193,20 @@ export class SailHost implements ServerState {
         const instanceTitle = queued?.instanceTitle ?? getAppState().createTitle(app)
 
         this.instanceStates.set(instanceId, AppInstanceState.Pending)
+
+        if (app.type === "native") {
+          try {
+            const opened = await openNativeViaBridge({
+              app: { appId: app.appId, instanceId },
+              ...(request.context !== undefined ? { context: request.context } : {}),
+            })
+            this.notify()
+            return { appId: app.appId, instanceId: opened.instanceId ?? instanceId }
+          } catch (error) {
+            this.instanceStates.delete(instanceId)
+            throw error
+          }
+        }
 
         if (hosting === AppHosting.Tab) {
           const url = (app.details as WebAppDetails).url
