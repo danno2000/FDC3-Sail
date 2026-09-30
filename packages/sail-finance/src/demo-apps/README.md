@@ -46,9 +46,15 @@ The source directory carries no `interop` block, so channel contexts were read o
 | `risk-engine` | `fdc3.instrument`, `elginwhite.riskAssessment` | `fdc3.instrument` on the user channel; `ViewRisk` returns the current book as `elginwhite.riskProfile` (VaR, sensitivities, stress, factors). A ticker is optional; the result is always fund-level, not single-name. |
 | `order-management` | `fdc3.order`, `fdc3.instrument` | `elginwhite.tradeProposals`, `fdc3.instrument` |
 | `ms-teams` | `fdc3.instrument` | `fdc3.instrument` |
+| `excel` | — | `ViewInstrument` (`fdc3.instrument` context, written to the first empty cell of column A); `fdc3.instrument` on the user channel |
 
 `elginwhite.tradeProposals` has no producer in the repo — it arrives from the external WPF
 app over `desktop-bridge` as a DACP `broadcastRequest`.
+
+`excel` is the task pane in `fdc3-demo-apps/packages/excel-adapter` (port 5182). It registers
+`ViewInstrument` through Desktop Bridge and writes `fdc3.instrument.id.ticker` into the
+first empty cell of column A. `npm run dev` and `npm run build` in that package copy the manifest
+into Excel's Mac sideload folder. Keep the dev server running. Desktop Excel on the same machine can reach `localhost:5180`.
 
 ## Deliberately dropped
 
@@ -60,8 +66,8 @@ repo calls `addIntentListener` — `order-management` receives trade proposals t
 target that never answers. The declaration belongs back once the app registers a real intent
 listener.
 
-The same applies to the earlier intent sets in the directory's git history (`ViewInstrument`,
-`ViewAnalytics`, `ViewRisk`, `ViewOrder`, `ManageOrders`, `ViewPortfolio`, and the `pms`/`oms`
+The same applies to the earlier intent sets in the directory's git history (`ViewAnalytics`,
+`ViewRisk`, `ViewOrder`, `ManageOrders`, `ViewPortfolio`, and the `pms`/`oms`
 `CreateOrder` pair in the deleted root `fdc3-app-directory.json`). None were ever implemented.
 
 **`crd-interop-tester`** (`http://127.0.0.1:8081/ElginWhite.Interop.Web/crd-interop-tester.html`).

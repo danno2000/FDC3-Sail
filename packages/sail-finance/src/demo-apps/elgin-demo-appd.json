@@ -145,6 +145,30 @@
         "path": "ElginWhite.Mock.CRD.exe"
       },
       "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }]
+    },
+    {
+      "appId": "excel",
+      "name": "Excel",
+      "title": "Excel",
+      "type": "web",
+      "description": "Excel task pane. Registers a ViewInstrument listener through Desktop Bridge and writes the fdc3.instrument ticker into the first empty cell of column A.",
+      "categories": ["Elgin Demo", "Productivity"],
+      "publisher": "Elgin",
+      "details": { "url": "http://localhost:5182/?app=excel" },
+      "icons": [{ "src": "http://localhost:5179/elginwhite-grey.ico" }],
+      "interop": {
+        "intents": {
+          "listensFor": {
+            "ViewInstrument": {
+              "displayName": "View Instrument",
+              "contexts": ["fdc3.instrument"]
+            }
+          }
+        },
+        "userChannels": {
+          "listensFor": ["fdc3.instrument"]
+        }
+      }
     }
   ]
 }
