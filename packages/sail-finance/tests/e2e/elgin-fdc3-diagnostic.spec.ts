@@ -30,7 +30,10 @@ function frameForPort(page: import("@playwright/test").Page, port: number): Fram
 test.describe("Elgin demo FDC3 via getAgent()", () => {
   test.setTimeout(60_000)
 
-  test("asset-screener broadcasts fdc3.instrument to risk-engine under Sail", async ({ page, context }) => {
+  test("asset-screener broadcasts fdc3.instrument to risk-engine under Sail", async ({
+    page,
+    context,
+  }) => {
     await context.clearCookies()
     await page.goto("/")
     await page.evaluate(() => localStorage.clear())
@@ -59,6 +62,8 @@ test.describe("Elgin demo FDC3 via getAgent()", () => {
     const riskAltCount = await risk!.evaluate(() =>
       typeof window.getAlternatives === "function" ? window.getAlternatives().length : -1,
     )
-    expect(riskAltCount, "risk-engine should receive EQ_VOW3 from asset-screener").toBeGreaterThan(0)
+    expect(riskAltCount, "risk-engine should receive EQ_VOW3 from asset-screener").toBeGreaterThan(
+      0,
+    )
   })
 })

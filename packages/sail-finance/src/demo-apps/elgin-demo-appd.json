@@ -38,7 +38,11 @@
           }
         },
         "userChannels": {
-          "broadcasts": ["fdc3.instrument", "elginwhite.riskAssessment", "elginwhite.tradeProposals"],
+          "broadcasts": [
+            "fdc3.instrument",
+            "elginwhite.riskAssessment",
+            "elginwhite.tradeProposals"
+          ],
           "listensFor": ["fdc3.instrument"]
         }
       }
