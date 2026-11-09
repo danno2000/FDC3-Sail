@@ -12,7 +12,7 @@ async function launchDemoApp(page: import("@playwright/test").Page, title: strin
       const trigger = document.querySelector('[data-slot="sidebar-trigger"]') as HTMLElement | null
       trigger?.click()
       const apps = Array.from(document.querySelectorAll('[data-sidebar="menu-button"]')).find(el =>
-        el.textContent?.includes("Apps"),
+        el.textContent.includes("Apps"),
       ) as HTMLElement | undefined
       apps?.click()
     })
@@ -30,7 +30,10 @@ function frameForPort(page: import("@playwright/test").Page, port: number): Fram
 test.describe("Elgin demo FDC3 via getAgent()", () => {
   test.setTimeout(60_000)
 
-  test("asset-screener broadcasts fdc3.instrument to risk-engine under Sail", async ({ page, context }) => {
+  test("asset-screener broadcasts fdc3.instrument to risk-engine under Sail", async ({
+    page,
+    context,
+  }) => {
     await context.clearCookies()
     await page.goto("/")
     await page.evaluate(() => localStorage.clear())
@@ -47,18 +50,21 @@ test.describe("Elgin demo FDC3 via getAgent()", () => {
     await page.waitForTimeout(2000)
 
     await screener!.evaluate(() => {
-      const row = [...document.querySelectorAll("tr")].find(r => r.textContent?.includes("VOW3"))
+      const row = [...document.querySelectorAll("tr")].find(r => r.textContent.includes("VOW3"))
       row?.querySelector<HTMLInputElement>("input[type=checkbox]")?.click()
       ;[...document.querySelectorAll("button")]
-        .find(b => b.textContent?.includes("Add to Proposed Trades"))
+        .find(b => b.textContent.includes("Add to Proposed Trades"))
         ?.click()
     })
 
     await page.waitForTimeout(2000)
 
-    const riskAltCount = await risk!.evaluate(() =>
-      typeof window.getAlternatives === "function" ? window.getAlternatives().length : -1,
+    const riskAltCount = await risk!.evaluate(() => {
+      const view = window as Window & { getAlternatives?: () => { length: number } }
+      return typeof view.getAlternatives === "function" ? view.getAlternatives().length : -1
+    })
+    expect(riskAltCount, "risk-engine should receive EQ_VOW3 from asset-screener").toBeGreaterThan(
+      0,
     )
-    expect(riskAltCount, "risk-engine should receive EQ_VOW3 from asset-screener").toBeGreaterThan(0)
   })
 })
