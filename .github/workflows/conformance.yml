@@ -34,8 +34,10 @@ jobs:
 
       # Only Chromium: playwright.config.ts declares a single chromium project, and the suite
       # opens real popup windows so it does not run cross-browser.
+      # Use the harness CLI. sail-finance hoists an older @playwright/test at the repo root,
+      # so `npx playwright` downloads Chromium 1228 while the suite launches 1234.
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: npm exec -w @finos/sail-conformance-harness -- playwright install --with-deps chromium
 
       # The harness resolves @finos/sail-desktop-agent from its `dist`, not its `src`, and
       # `dist` is gitignored — so on a clean runner the agent must be built first. The
